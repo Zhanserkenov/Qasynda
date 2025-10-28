@@ -1,0 +1,39 @@
+# Test your FastAPI endpoints
+
+GET http://127.0.0.1:8000/
+Accept: application/json
+
+###
+
+# Step 1: Get list of friends (use existing friendship endpoint)
+# This will show you available friends before creating a group
+GET http://127.0.0.1:8000/friendship
+Accept: application/json
+Authorization: Bearer YOUR_TOKEN_HERE
+
+###
+
+# Step 2: Create a group chat with friends
+# In "friend_ids" specify IDs of friends you want to add to the group
+# You can get these IDs from the friends list above
+POST http://127.0.0.1:8000/chat/group
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN_HERE
+
+{
+  "title": "Моя группа",
+  "friend_ids": [1, 2, 3]
+}
+
+###
+
+# Create a group chat without adding friends initially (empty group)
+POST http://127.0.0.1:8000/chat/group
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN_HERE
+
+{
+  "title": "Новая группа"
+}
+
+###
