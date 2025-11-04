@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import select, func
 
 from app.models import ChatParticipant, Chat, User
 
@@ -28,7 +28,8 @@ async def get_user_chats(db: AsyncSession, user_id: int):
             )
             other_user = result.scalar_one_or_none()
             if other_user:
-                chat.title = other_user.username
+                # Используем name, если есть, иначе email
+                chat.title = other_user.name if other_user.name else other_user.email
 
     return chats
 
@@ -47,7 +48,7 @@ async def get_or_create_private_chat(db: AsyncSession, user_id: int, friend_id: 
             ChatParticipant.user_id.in_([user_id, friend_id])
         )
         .group_by(Chat.id)
-        .having(db.func.count(ChatParticipant.user_id) == 2)
+        .having(func.count(ChatParticipant.user_id) == 2)
     )
     existing_chat = result.scalar_one_or_none()
 
